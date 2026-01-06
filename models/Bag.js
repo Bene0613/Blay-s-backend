@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bagSchema = new Schema({
-  user: String,
+  userId: {
+    type: String,
+    required: true
+  },
+  username: {
+    type: String,
+    required: true
+  },
   colorChoice: String,
   imgChoice: String,
   fontChoice: String,
@@ -18,6 +25,4 @@ const bagSchema = new Schema({
   }
 });
 
-const Bag = mongoose.model('Bag', bagSchema);
-
-module.exports = Bag;
+module.exports = mongoose.model('Bag', bagSchema);

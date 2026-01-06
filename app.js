@@ -5,8 +5,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/api/v1/users');
 const apiBagsRouter = require('./routes/api/v1/bags');
+const session = require('express-session');
+
 
 const mongoose = require('mongoose');
 
@@ -32,9 +34,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: "layssecretkey",
+  resave: false,
+  saveUninitialized: false
+}));
+
 app.use(cors());
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/bags', apiBagsRouter);
 
 // catch 404 and forward to error handler
@@ -43,14 +51,24 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// error handler (API + HTML)
+app.use((err, req, res, next) => {
+  console.error("ERROR:", err);
 
-  // render the error page
+  // If the request is for the API, return JSON
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.status || 500).json({
+      status: "error",
+      message: err.message || "Server error"
+    });
+  }
+
+  // Otherwise return HTML for browser routes
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', { 
+    message: err.message, 
+    error: req.app.get('env') === 'development' ? err : {} 
+  });
 });
 
 module.exports = app;
