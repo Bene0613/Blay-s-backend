@@ -3,7 +3,13 @@ const Bag = require('../../../models/Bag');
 // GET /api/v1/bags
 const getAll = async (req, res) => {
   try {
-    const bags = await Bag.find();
+    let query = {};
+
+    if (req.user) {
+      query.userId = req.user.userId;
+    }
+
+    const bags = await Bag.find(query);
 
     res.json({
       status: "success",
@@ -70,6 +76,24 @@ const vote = async (req, res) => {
   }
 };
 
+const getMyBags = async (req, res) => {
+  try {
+    const bags = await Bag.find({ userId: req.user.userId });
+
+    res.json({
+      status: 'success',
+      data: { bags }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message
+    });
+  }
+};
+
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.vote = vote; 
+module.exports.getMyBags = getMyBags;
