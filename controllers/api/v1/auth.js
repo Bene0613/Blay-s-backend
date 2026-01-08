@@ -1,3 +1,4 @@
+const theAdmin = require('../../../middleware/theAdmin');
 const User = require('../../../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -57,7 +58,8 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user._id,
-        email: user.email
+        email: user.email,
+        theAdmin: user.theAdmin
       },
       'supersecretkey', 
       { expiresIn: '1h' }

@@ -8,7 +8,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/api/v1/users');
 const apiBagsRouter = require('./routes/api/v1/bags');
 const session = require('express-session');
-
+const voteRouter = require('./routes/api/v1/votes');
 
 const mongoose = require('mongoose');
 
@@ -44,8 +44,8 @@ app.use(cors());
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/bags', apiBagsRouter);
+app.use('/api/v1/vote', voteRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
